@@ -13,12 +13,14 @@ namespace ve_xem_phim.Models
             _configuration = configuration;
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        protected override void OnModelCreating(ModelBuilder builder)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlServer(_configuration.GetConnectionString("DefaultConnection"));
-            }
+            base.OnModelCreating(builder);
+            builder.Entity<User>()
+                .HasOne(c => c.Cart)
+                .WithOne(c => c.User)
+                .HasForeignKey<Cart>(c => c.UserId)
+                .IsRequired();
         }
 
         public DbSet<Movie> Movies { get; set; }

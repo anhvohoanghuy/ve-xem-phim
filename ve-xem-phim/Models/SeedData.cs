@@ -26,7 +26,7 @@ namespace ve_xem_phim.Models
             var adminUser = await userManager.FindByEmailAsync(adminEmail);
             if (adminUser == null)
             {
-                adminUser = new User { UserName = adminEmail, Email = adminEmail };
+                adminUser = new User { UserName = adminEmail,FirstName="admin",LastName="last", Email = adminEmail };
                 var result = await userManager.CreateAsync(adminUser, adminPassword);
                 if (result.Succeeded)
                 {
