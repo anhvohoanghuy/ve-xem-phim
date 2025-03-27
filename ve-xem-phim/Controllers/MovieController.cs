@@ -25,11 +25,18 @@ namespace ve_xem_phim.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult AddMovie(string title, string description)
+        public IActionResult AddMovie(Movie model)
         {
-            var movie = new Movie { Title = title, Description = description, IsActive = true };
-            _context.Movies.Add(movie);
-            _context.SaveChanges();
+            try
+            {
+                _context.Movies.Add(model);
+                _context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Lỗi khi add: " + ex.Message);
+                return View(model);
+            }
             return RedirectToAction("ManageMovies");
         }
         public IActionResult EditMovie(int id)
@@ -38,14 +45,18 @@ namespace ve_xem_phim.Controllers
             return View(movie);
         }
         [HttpPost]
-        public IActionResult EditMovie(int id, string title, string description)
+        public IActionResult EditMovie(Movie model)
         {
-            var movie = _context.Movies.Find(id);
-            if (movie != null)
+            var movie = _context.Movies.Find(model.Id);
+            try
             {
-                movie.Title = title;
-                movie.Description = description;
+                _context.Movies.Update(movie);
                 _context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Lỗi khi edit: " + ex.Message);
+                return View(model);
             }
             return RedirectToAction("ManageMovies");
         }
