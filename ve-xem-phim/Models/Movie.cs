@@ -1,9 +1,11 @@
-﻿using System.Net.Sockets;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Net.Sockets;
 
 namespace ve_xem_phim.Models
 {
     public class Movie
     {
+        [Key]
         public int Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }

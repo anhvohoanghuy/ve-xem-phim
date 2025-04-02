@@ -1,0 +1,65 @@
+﻿@model List<ve_xem_phim.Models.Ticket>
+
+@{
+    ViewData["Title"] = "Danh sách vé";
+}
+
+<div class="container mt-4">
+    <h2 class="text-center">Danh sách vé</h2>
+    <p><strong>Số vé còn lại:</strong> @Model.Count(t => t.Available)</p>
+    
+    <form method="post" class="mb-3">
+        <div class="row">
+            <div class="col-md-3">
+                <label for="rom">Phòng:</label>
+                <select name="rom" class="form-control">
+                    <option value="0">Tất cả</option>
+                    @foreach (var rom in Model.Select(t => t.Rom).Distinct())
+                    {
+                        <option value="@rom">@rom</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="row">Hàng:</label>
+                <select name="row" class="form-control">
+                    <option value="0">Tất cả</option>
+                    @foreach (var row in Model.Select(t => t.Row).Distinct())
+                    {
+                        <option value="@row">@row</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="number">Số ghế:</label>
+                <select name="seat" class="form-control">
+                    <option value="0">Tất cả</option>
+                    @foreach (var number in Model.Select(t => t.Number).Distinct())
+                    {
+                        <option value="@number">@number</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3 align-self-end">
+                <button type="submit" class="btn btn-primary">Lọc</button>
+            </div>
+        </div>
+    </form>
+
+    <div class="row">
+        @foreach (var ticket in Model.Where(t => t.Available))
+        {
+            <div class="col-md-3 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Ghế @ticket.Row @ticket.Number</h5>
+                        <p class="card-text">Phòng: @ticket.Rom</p>
+                        <p class="card-text">Giờ chiếu: @ticket.Date</p>
+                        <p class="card-text">Giá: @ticket.Price VNĐ</p>
+                        <a href="/Home/BuyTicket?ticketId=@ticket.Id" class="btn btn-success">Mua vé</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

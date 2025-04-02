@@ -20,6 +20,12 @@ namespace ve_xem_phim.Controllers
             var movies = _context.Movies.ToList();
             return View(movies);
         }
+        [HttpPost]
+        public IActionResult ManageMovies(string name)
+        {
+            var movies = _context.Movies.Where(c=>c.Title.ToLower()==name.ToLower()).ToList();
+            return View(movies);
+        }
         public IActionResult AddMovie()
         {
             return View();

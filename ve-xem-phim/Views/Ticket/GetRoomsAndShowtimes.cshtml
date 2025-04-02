@@ -1,0 +1,61 @@
+﻿@model List<ve_xem_phim.ViewModel.RoomShowtimeViewModel>
+
+@{
+    ViewData["Title"] = "Lịch Chiếu Phim";
+}
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4 text-primary">Lịch Chiếu Phim</h2>
+
+    <div class="text-center mb-3">
+        <h4 class="fw-bold">@ViewBag.Movie?.Title</h4>
+    </div>
+
+    @if (Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-hover shadow-sm">
+                <thead class="table-dark">
+                    <tr>
+                        <th class="text-center">Phòng Chiếu</th>
+                        <th class="text-center">Thời Gian Chiếu</th>
+                        <th class="text-center">Hành Động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="text-center fw-semibold">@item.Rom</td>
+                            <td class="text-center">@item.Date.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td class="text-center">
+                                <!-- Sửa giờ chiếu và giá vé -->
+                                <a href="@Url.Action("EditTicket", "Ticket", new { movieId = ViewBag.Movie?.Id, rom = item.Rom, date = item.Date })"
+                                   class="btn btn-warning btn-sm">
+                                    Sửa
+                                </a>
+
+                                <!-- Vô hiệu hóa vé -->
+                                <a href="@Url.Action("DeleteTicket", "Ticket", new { movieId = ViewBag.Movie?.Id, rom = item.Rom, date = item.Date })"
+                                   class="btn btn-danger btn-sm"
+                                   onclick="return confirm('Bạn có chắc chắn muốn vô hiệu hóa tất cả vé cho phòng và giờ chiếu này?');">
+                                    Vô Hiệu Hóa
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning text-center">
+            Chưa có lịch chiếu nào cho phim này.
+        </div>
+    }
+
+    <div class="text-center mt-4">
+        <a href="/" class="btn btn-secondary">Quay lại</a>
+    </div>
+</div>

@@ -1,0 +1,77 @@
+﻿@model ve_xem_phim.ViewModel.AddTicketViewModel
+
+@{
+    ViewData["Title"] = "Thêm vé";
+    int movieId = ViewBag.MovieId;
+}
+
+<h2>Thêm vé cho phim</h2>
+
+<form asp-action="AddTickets" method="post">
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    <input type="hidden" name="movieId" value="@movieId" />
+
+    <div class="form-group">
+        <label for="rom">Phòng chiếu:</label>
+        <input type="number" id="rom" name="rom" class="form-control" required />
+        @Html.ValidationMessageFor(model => model.Rom, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        <label for="date">Ngày chiếu:</label>
+        <input type="datetime-local" id="date" name="date" class="form-control" required />
+        @Html.ValidationMessageFor(model => model.Date, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        <label for="price">Giá vé:</label>
+        <input type="number" id="price" name="price" class="form-control" step="0.01" required />
+        @Html.ValidationMessageFor(model => model.Price, "", new { @class = "text-danger" })
+    </div>
+
+    <h3>Danh sách ghế được tạo:</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Hàng</th>
+                <th>Số ghế</th>
+                <th>Phòng</th>
+                <th>Ngày chiếu</th>
+                <th>Giá vé</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                string[] rows = { "A", "B", "C", "D", "E", "F", "G" };
+                foreach (var row in rows)
+                {
+                    for (int num = 1; num <= 12; num++)
+                    {
+                        <tr>
+                            <td>@row</td>
+                            <td>@num</td>
+                            <td><span id="displayRom">-</span></td>
+                            <td><span id="displayDate">-</span></td>
+                            <td><span id="displayPrice">-</span></td>
+                        </tr>
+                    }
+                }
+            }
+        </tbody>
+    </table>
+
+    <button type="submit" class="btn btn-primary">Thêm vé</button>
+</form>
+
+<script>
+    document.getElementById("rom").addEventListener("input", function() {
+        document.querySelectorAll("#displayRom").forEach(el => el.innerText = this.value);
+    });
+    document.getElementById("date").addEventListener("input", function() {
+        document.querySelectorAll("#displayDate").forEach(el => el.innerText = this.value);
+    });
+    document.getElementById("price").addEventListener("input", function() {
+        document.querySelectorAll("#displayPrice").forEach(el => el.innerText = this.value);
+    });
+</script>
