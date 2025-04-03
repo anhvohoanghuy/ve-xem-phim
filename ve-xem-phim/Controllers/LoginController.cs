@@ -23,15 +23,16 @@ namespace ve_xem_phim.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(string email, string password)
+        public async Task<IActionResult> Login(LoginViewModel model)
         {
-            var result = await _signInManager.PasswordSignInAsync(email, password, false, false);
+            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, false);
 
             if (result.Succeeded)
             {
-                return Ok("Đăng nhập thành công!");
+                return RedirectToAction("Index","Home");
             }
-            return Unauthorized("Sai email hoặc mật khẩu");
+            ModelState.AddModelError("", "Sai email hoặc mật khẩu");
+            return View(model);
         }
         public IActionResult Register()
         {
@@ -56,14 +57,14 @@ namespace ve_xem_phim.Controllers
                     await _userManager.AddToRoleAsync(user, "User");
                 }
                 await _signInManager.SignInAsync(user, isPersistent: false);
-                return Ok("Đăng ký thành công!");
+                return RedirectToAction("Index", "Home");
             }
             return BadRequest(result.Errors);
         }
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Home"); ;
         }
 
     }
