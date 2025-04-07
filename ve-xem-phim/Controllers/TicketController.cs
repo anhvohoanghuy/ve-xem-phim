@@ -7,7 +7,7 @@ using ve_xem_phim.ViewModel;
 
 namespace ve_xem_phim.Controllers
 {
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public class TicketController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -163,11 +163,11 @@ namespace ve_xem_phim.Controllers
             return View(model); // Trả lại view nếu dữ liệu không hợp lệ
         }
 
-        public IActionResult DeleteTicket(int movieId, int rom, DateTime date)
+        public IActionResult DeleteTicket(EditTicketViewModel model)
         {
             // Lấy tất cả các vé có cùng MovieId, Rom và Date
             var tickets = _context.Tickets
-                .Where(t => t.MovieId == movieId && t.Rom == rom && t.Date == date)
+                .Where(t => t.MovieId == model.MovieId && t.Rom == model.Rom && t.Date == model.Date)
                 .ToList();
 
             if (tickets.Any())
@@ -181,7 +181,7 @@ namespace ve_xem_phim.Controllers
                 _context.SaveChanges(); // Lưu thay đổi vào cơ sở dữ liệu
             }
 
-            return RedirectToAction("GetRoomsAndShowtimes", "Ticket", new { movieId = movieId}); // Quay lại trang quản lý vé
+            return RedirectToAction("GetRoomsAndShowtimes", "Ticket", new { movieId = model.MovieId}); // Quay lại trang quản lý vé
         }
 
         [HttpGet]

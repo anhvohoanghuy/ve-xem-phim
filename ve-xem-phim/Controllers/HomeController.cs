@@ -1,9 +1,11 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ve_xem_phim.Models;
+using ve_xem_phim.ViewModel;
 
 namespace ve_xem_phim.Controllers
 {
@@ -66,19 +68,19 @@ namespace ve_xem_phim.Controllers
             return View(movie);
         }
 
-        public IActionResult Ticket(int movieId)
+        public IActionResult Ticket(int movieId, int rom, DateTime date)
         {
-            var tickets = _context.Tickets.Where(t => t.MovieId == movieId).ToList();
+            var tickets = _context.Tickets.Where(t => t.MovieId == movieId && t.Rom== rom&& t.Date==date).ToList();
+            ViewBag.Date=date;
+            ViewBag.Rom = rom;
             return View(tickets);
         }
         [HttpPost]
-        public IActionResult Ticket(int movieId, string row, string seat, string rom)
+        public IActionResult Ticket(int movieId, string row, string seat, DateTime date)
         {
             int number;
             int.TryParse(seat,out number);
-            int romNumber;
-            int.TryParse(rom, out romNumber);
-            List<Ticket> tickets = _context.Tickets.Where(t => t.MovieId == movieId).ToList();
+            List<Ticket> tickets = _context.Tickets.Where(t => t.MovieId == movieId && t.Date==date).ToList();
             if (row != "0")
             {
                 tickets=tickets.Where(t=>t.Row==row).ToList();
@@ -87,25 +89,109 @@ namespace ve_xem_phim.Controllers
             {
                 tickets=tickets.Where(t=>t.Number==number).ToList();
             }
-            if(romNumber > 0)
-            {
-                tickets=tickets.Where(t=>t.Rom==romNumber).ToList();
-            }
             return View(tickets);
         }
-        [Authorize(Roles = "Admin")]
-        [HttpPost]
-        public IActionResult BuyTicket(string userId, int ticketId)
+        [Authorize(Roles = "Admin,User")]
+        public IActionResult BuyTicket(int ticketId)
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (userId == null)
+            {
+                return RedirectToAction("Login", "Login");
+            }
+
             var ticket = _context.Tickets.FirstOrDefault(t => t.Id == ticketId);
-            var user = _context.Users.Include(u => u.Cart).ThenInclude(c => c.Tickets).FirstOrDefault(u => u.Id == userId);
+            var user = _context.Users
+                .Include(u => u.Cart)
+                .ThenInclude(c => c.Tickets)
+                .FirstOrDefault(u => u.Id == userId);
+
             if (ticket != null && ticket.Available && user != null)
             {
+                // Ensure the Cart exists
+                if (user.Cart == null)
+                {
+                    user.Cart = new Cart
+                    {
+                        Tickets = new List<Ticket>()
+                    };
+                    _context.Carts.Add(user.Cart); // Optional if you have cascade set up
+                }
+
                 ticket.Available = false;
                 user.Cart.Tickets.Add(ticket);
                 _context.SaveChanges();
             }
+
             return RedirectToAction("Index");
+        }
+        public IActionResult RemoveTicket(int ticketId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (userId == null)
+            {
+                return RedirectToAction("Login", "Login");
+            }
+
+            var user = _context.Users
+                .Include(u => u.Cart)
+                .ThenInclude(c => c.Tickets)
+                .FirstOrDefault(u => u.Id == userId);
+
+            var ticket = _context.Tickets.FirstOrDefault(t => t.Id == ticketId);
+
+            if (ticket != null && user?.Cart != null && user.Cart.Tickets.Contains(ticket))
+            {
+                user.Cart.Tickets.Remove(ticket);
+                ticket.Available = true;
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("Index"); // hoặc tên view đang hiển thị vé đã mua
+        }
+        [HttpGet]
+        public IActionResult GetRoomsAndShowtimes(int movieId)
+        {
+            var showtimes = _context.Tickets
+                .Where(t => t.MovieId == movieId && t.Available == true && t.Date> DateTime.Today)
+                .GroupBy(t => new { t.Rom, t.Date })
+                .Select(g => new RoomShowtimeViewModel
+                {
+                    Rom = g.Key.Rom,
+                    Date = g.Key.Date,
+                    Quantity = g.Count()
+                })
+                .OrderBy(s => s.Date)
+                .ToList();
+
+            ViewBag.Movie = _context.Movies.FirstOrDefault(m => m.Id == movieId); // Lấy thông tin phim để hiển thị
+
+            return View(showtimes); // Trả về View
+        }
+        
+        public async Task<IActionResult> MyTickets()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (userId == null)
+            {
+                return RedirectToAction("Login", "Login");
+            }
+
+            var cart = await _context.Carts
+                .Include(c => c.Tickets)
+                .ThenInclude(t => t.Movie) // nếu Ticket có liên kết với Movie
+                .FirstOrDefaultAsync(c => c.UserId == userId);
+
+            if (cart == null || !cart.Tickets.Any())
+            {
+                ViewBag.Message = "Bạn chưa mua vé nào.";
+                return View(new List<Ticket>());
+            }
+
+            return View(cart.Tickets);
         }
     }
 }

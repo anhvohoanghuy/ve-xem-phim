@@ -32,16 +32,9 @@
                             <td class="text-center fw-semibold">@item.Quantity</td>
                             <td class="text-center">
                                 <!-- Sửa giờ chiếu và giá vé -->
-                                <a href="@Url.Action("EditTicket", "Ticket", new { movieId = ViewBag.Movie?.Id, rom = item.Rom, date = item.Date })"
+                                <a href="@Url.Action("Ticket", "Home", new { movieId = ViewBag.Movie?.Id, rom = item.Rom, date = item.Date })"
                                    class="btn btn-warning btn-sm">
-                                    Sửa
-                                </a>
-
-                                <!-- Vô hiệu hóa vé -->
-                                <a href="@Url.Action("DeleteTicket", "Ticket", new { movieId = ViewBag.Movie?.Id, rom = item.Rom, date = item.Date })"
-                                   class="btn btn-danger btn-sm"
-                                   onclick="return confirm('Bạn có chắc chắn muốn vô hiệu hóa tất cả vé cho phòng và giờ chiếu này?');">
-                                    Vô Hiệu Hóa
+                                    Mua vé
                                 </a>
                             </td>
                         </tr>

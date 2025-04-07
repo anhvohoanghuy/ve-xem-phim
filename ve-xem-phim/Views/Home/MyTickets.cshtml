@@ -1,0 +1,44 @@
+﻿@model List<ve_xem_phim.Models.Ticket>
+
+@{
+    ViewData["Title"] = "Vé đã mua";
+}
+
+<h2>Vé đã mua</h2>
+
+@if (!Model.Any())
+{
+    <p>@ViewBag.Message</p>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>STT</th>
+                <th>Tên phim</th>
+                <th>Ngày chiếu</th>
+                <th>Ghế</th>
+                <th>Giá</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                <tr>
+                    <td>@(i + 1)</td>
+                    <td>@Model[i].Movie?.Title</td>
+                    <td>@Model[i].Date.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@Model[i].Number</td>
+                    <td>@Model[i].Price.ToString("N0") VND</td>
+                    <td>
+                        <a asp-controller="Home" asp-action="RemoveTicket" asp-route-ticketId="@Model[i].Id" class="btn btn-danger btn-sm">Xóa</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <a asp-controller="CheckOut" asp-action="Checkout" class="btn btn-success">Thanh toán</a>
+}

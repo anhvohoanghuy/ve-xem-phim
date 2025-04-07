@@ -4,5 +4,6 @@
     {
         public int Rom { get; set; }
         public DateTime Date { get; set; }
+        public int Quantity { get; set; }
     }
 }

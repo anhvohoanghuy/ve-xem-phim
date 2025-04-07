@@ -10,16 +10,7 @@
     
     <form method="post" class="mb-3">
         <div class="row">
-            <div class="col-md-3">
-                <label for="rom">Phòng:</label>
-                <select name="rom" class="form-control">
-                    <option value="0">Tất cả</option>
-                    @foreach (var rom in Model.Select(t => t.Rom).Distinct())
-                    {
-                        <option value="@rom">@rom</option>
-                    }
-                </select>
-            </div>
+            
             <div class="col-md-3">
                 <label for="row">Hàng:</label>
                 <select name="row" class="form-control">
@@ -40,6 +31,12 @@
                     }
                 </select>
             </div>
+            <div hidden>
+                <input type="datetime-local" name="date" value="@(ViewBag.Date != null ? ((DateTime)ViewBag.Date).ToString("yyyy-MM-ddTHH:mm") : "")" />
+            </div>
+            <div hidden>
+                <input type="number" name="rom" value=@ViewBag.Rom />
+            </div>
             <div class="col-md-3 align-self-end">
                 <button type="submit" class="btn btn-primary">Lọc</button>
             </div>
@@ -55,8 +52,8 @@
                         <h5 class="card-title">Ghế @ticket.Row @ticket.Number</h5>
                         <p class="card-text">Phòng: @ticket.Rom</p>
                         <p class="card-text">Giờ chiếu: @ticket.Date</p>
-                        <p class="card-text">Giá: @ticket.Price VNĐ</p>
-                        <a href="/Home/BuyTicket?ticketId=@ticket.Id" class="btn btn-success">Mua vé</a>
+                        <p class="card-text">Giá: @ticket.Price.ToString("N0") VNĐ</p>
+                        <a asp-controller="Home" asp-action="BuyTicket" asp-route-ticketId="@ticket.Id" class="btn btn-success">Mua vé</a>
                     </div>
                 </div>
             </div>

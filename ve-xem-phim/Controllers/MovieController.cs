@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ve_xem_phim.Models;
 
@@ -17,13 +18,46 @@ namespace ve_xem_phim.Controllers
 
         public IActionResult ManageMovies()
         {
-            var movies = _context.Movies.ToList();
+            var categories = _context.Categories.ToList();
+            List<SelectListItem> selectList = new List<SelectListItem>();
+            foreach (var item in categories)
+            {
+                SelectListItem selectListItem = new SelectListItem { Value = item.Id.ToString(), Text = item.Name };
+                selectList.Add(selectListItem);
+            }
+            ViewBag.SelectList = selectList;
+            var movies = _context.Movies.Where(m => m.IsActive).ToList();
             return View(movies);
         }
         [HttpPost]
-        public IActionResult ManageMovies(string name)
+        public IActionResult ManageMovies(string name,string idCategory)
         {
-            var movies = _context.Movies.Where(c=>c.Title.ToLower()==name.ToLower()).ToList();
+            var categoryId = int.Parse(idCategory);
+            var categories = _context.Categories.ToList();
+            List<SelectListItem> selectList = new List<SelectListItem>();
+            foreach (var item in categories)
+            {
+                SelectListItem selectListItem = new SelectListItem { Value = item.Id.ToString(), Text = item.Name };
+                selectList.Add(selectListItem);
+            }
+            ViewBag.SelectList = selectList;
+            List<Movie> movies;
+            if (categoryId > 0 && !string.IsNullOrEmpty(name))
+            {
+                movies = _context.Movies.Where(m => m.IsActive && m.Title.ToLower().Contains(name.ToLower().Trim()) && m.CategoryId == categoryId).ToList();
+            }
+            else if (categoryId > 0)
+            {
+                movies = _context.Movies.Where(m => m.IsActive && m.CategoryId == categoryId).ToList();
+            }
+            else if (categoryId == 0)
+            {
+                movies = _context.Movies.Where(m => m.IsActive && m.Title.ToLower().Contains(name.ToLower().Trim())).ToList();
+            }
+            else
+            {
+                movies = _context.Movies.Where(m => m.IsActive).ToList();
+            }
             return View(movies);
         }
         public IActionResult AddMovie()

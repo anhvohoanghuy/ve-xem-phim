@@ -20,9 +20,9 @@ namespace ve_xem_phim.Controllers
             _context = context;
         }
 
-        [HttpPost]
-        public IActionResult Checkout(string userId)
+        public IActionResult Checkout()
         {
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var user = _context.Users.Include(u => u.Cart).ThenInclude(c => c.Tickets).FirstOrDefault(u => u.Id == userId);
             if (user != null && user.Cart.Tickets.Any())
             {
@@ -36,11 +36,9 @@ namespace ve_xem_phim.Controllers
                 _context.Invoices.Add(invoice);
                 user.Cart.Tickets.Clear();
                 _context.SaveChanges();
-                return View("Invoice", invoice);
+                return View(invoice);
             }
             return RedirectToAction("Index");
         }
-
-        
     }
 }

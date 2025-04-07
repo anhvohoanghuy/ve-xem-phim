@@ -1,0 +1,60 @@
+﻿@model ve_xem_phim.Models.Invoice
+
+@{
+    ViewData["Title"] = "Hóa đơn thanh toán";
+}
+
+<h2 class="mb-4">Hóa đơn thanh toán</h2>
+
+@if (Model.User != null)
+{
+    <div class="mb-3">
+        <strong>Người đặt:</strong> @Model.User.FirstName @Model.User.LastName <br />
+        <strong>Email:</strong> @Model.User.Email
+    </div>
+}
+
+<div class="mb-3">
+    <strong>Mã hóa đơn:</strong> @Model.Id <br />
+    <strong>Thời gian thanh toán:</strong> @Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")
+</div>
+
+@if (Model.Tickets == null || !Model.Tickets.Any())
+{
+    <p>Không có vé nào trong hóa đơn.</p>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>STT</th>
+                <th>Tên phim</th>
+                <th>Ngày chiếu</th>
+                <th>Phòng</th>
+                <th>Ghế</th>
+                <th>Giá vé</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Tickets.Count; i++)
+            {
+                var ticket = Model.Tickets[i];
+                <tr>
+                    <td>@(i + 1)</td>
+                    <td>@ticket.Movie?.Title</td>
+                    <td>@ticket.Date.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@ticket.Rom</td>
+                    <td>@(ticket.Row + ticket.Number)</td>
+                    <td>@ticket.Price.ToString("N0") VND</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="text-end mt-3">
+        <h4><strong>Tổng tiền:</strong> @Model.TotalPrice.ToString("N0") VND</h4>
+    </div>
+
+    <a asp-action="Index" asp-controller="Home" class="btn btn-primary mt-4">Về trang chủ</a>
+}
