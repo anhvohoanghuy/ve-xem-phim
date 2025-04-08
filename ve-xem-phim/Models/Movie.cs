@@ -14,5 +14,6 @@ namespace ve_xem_phim.Models
         public string Url { get; set; }
         public Category Category { get; set; }
         public List<Ticket> Tickets { get; set; } = new List<Ticket>();
+        public List<Comment>? Comments { get; set; }
     }
 }

@@ -64,7 +64,7 @@ namespace ve_xem_phim.Controllers
         }
         public IActionResult MovieDetails(int id)
         {
-            var movie = _context.Movies.Include(m => m.Tickets).Include(m => m.Category).FirstOrDefault(m => m.Id == id);
+            var movie = _context.Movies.Include(m => m.Tickets).Include(m => m.Category).Include(m => m.Comments).FirstOrDefault(m => m.Id == id);
             return View(movie);
         }
 
@@ -192,6 +192,16 @@ namespace ve_xem_phim.Controllers
             }
 
             return View(cart.Tickets);
+        }
+        [HttpPost]
+        public IActionResult AddComment(Comment comment)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Comments.Add(comment);
+                _context.SaveChanges();
+            }
+            return RedirectToAction("Details", new { id = comment.MovieId });
         }
     }
 }

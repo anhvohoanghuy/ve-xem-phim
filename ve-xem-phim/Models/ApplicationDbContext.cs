@@ -41,5 +41,6 @@ namespace ve_xem_phim.Models
         public DbSet<Cart> Carts { get; set; }
         public DbSet<Invoice> Invoices { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<Comment> Comments { get; set; }
     }
 }
