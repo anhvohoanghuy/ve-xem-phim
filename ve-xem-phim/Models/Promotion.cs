@@ -3,9 +3,8 @@
     public class Promotion
     {
         public int Id { get; set; }
-        public int MovieId { get; set; }
-        public Movie Movie { get; set; }
         public decimal DiscountPercentage { get; set; }
         public bool IsActive { get; set; } = true;
+        public List<Ticket> Tickets { get; set; }
     }
 }

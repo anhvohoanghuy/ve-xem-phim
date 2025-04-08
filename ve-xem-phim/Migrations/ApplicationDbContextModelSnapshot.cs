@@ -264,12 +264,7 @@ namespace ve_xem_phim.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<int>("MovieId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("MovieId");
 
                     b.ToTable("Promotions");
                 });
@@ -303,6 +298,9 @@ namespace ve_xem_phim.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int?>("PromotionId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Rom")
                         .HasColumnType("int");
 
@@ -317,6 +315,8 @@ namespace ve_xem_phim.Migrations
                     b.HasIndex("InvoiceId");
 
                     b.HasIndex("MovieId");
+
+                    b.HasIndex("PromotionId");
 
                     b.ToTable("Tickets");
                 });
@@ -478,17 +478,6 @@ namespace ve_xem_phim.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("ve_xem_phim.Models.Promotion", b =>
-                {
-                    b.HasOne("ve_xem_phim.Models.Movie", "Movie")
-                        .WithMany()
-                        .HasForeignKey("MovieId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Movie");
-                });
-
             modelBuilder.Entity("ve_xem_phim.Models.Ticket", b =>
                 {
                     b.HasOne("ve_xem_phim.Models.Cart", null)
@@ -505,7 +494,14 @@ namespace ve_xem_phim.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ve_xem_phim.Models.Promotion", "Promotion")
+                        .WithMany("Tickets")
+                        .HasForeignKey("PromotionId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.Navigation("Movie");
+
+                    b.Navigation("Promotion");
                 });
 
             modelBuilder.Entity("ve_xem_phim.Models.Cart", b =>
@@ -524,6 +520,11 @@ namespace ve_xem_phim.Migrations
                 });
 
             modelBuilder.Entity("ve_xem_phim.Models.Movie", b =>
+                {
+                    b.Navigation("Tickets");
+                });
+
+            modelBuilder.Entity("ve_xem_phim.Models.Promotion", b =>
                 {
                     b.Navigation("Tickets");
                 });

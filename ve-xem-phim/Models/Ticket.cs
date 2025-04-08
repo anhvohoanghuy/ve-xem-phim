@@ -12,7 +12,9 @@ namespace ve_xem_phim.Models
         public bool Available { get; set; } = true;
         public int MovieId { get; set; }
         public DateTime Date { get; set; }
-        public Movie Movie { get; set; }
+        public int? PromotionId { get; set; }
+        public Movie Movie { get; set; } 
         public decimal Price { get; set; }
+        public Promotion? Promotion { get; set; }
     }
 }

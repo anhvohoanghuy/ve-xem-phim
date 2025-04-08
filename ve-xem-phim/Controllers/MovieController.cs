@@ -26,7 +26,7 @@ namespace ve_xem_phim.Controllers
                 selectList.Add(selectListItem);
             }
             ViewBag.SelectList = selectList;
-            var movies = _context.Movies.Where(m => m.IsActive).ToList();
+            var movies = _context.Movies.ToList();
             return View(movies);
         }
         [HttpPost]
@@ -62,11 +62,13 @@ namespace ve_xem_phim.Controllers
         }
         public IActionResult AddMovie()
         {
+            ViewBag.Categories = new SelectList(_context.Categories, "Id", "Name");
             return View();
         }
         [HttpPost]
         public IActionResult AddMovie(Movie model)
         {
+            ViewBag.Categories = new SelectList(_context.Categories, "Id", "Name");
             try
             {
                 _context.Movies.Add(model);
@@ -81,15 +83,30 @@ namespace ve_xem_phim.Controllers
         }
         public IActionResult EditMovie(int id)
         {
+            ViewBag.Categories = new SelectList(_context.Categories, "Id", "Name");
             var movie = _context.Movies.Find(id);
             return View(movie);
         }
         [HttpPost]
         public IActionResult EditMovie(Movie model)
         {
+            ViewBag.Categories = new SelectList(_context.Categories, "Id", "Name");
+
             var movie = _context.Movies.Find(model.Id);
+            if (movie == null)
+            {
+                return NotFound();
+            }
+
             try
             {
+                // Gán giá trị mới từ model
+                movie.Title = model.Title;
+                movie.Description = model.Description;
+                movie.CategoryId = model.CategoryId;
+                movie.Url = model.Url;
+                movie.IsActive = model.IsActive;
+
                 _context.Movies.Update(movie);
                 _context.SaveChanges();
             }
@@ -98,6 +115,7 @@ namespace ve_xem_phim.Controllers
                 ModelState.AddModelError("", "Lỗi khi edit: " + ex.Message);
                 return View(model);
             }
+
             return RedirectToAction("ManageMovies");
         }
         public IActionResult DeleteMovie(int id)
@@ -106,6 +124,16 @@ namespace ve_xem_phim.Controllers
             if (movie != null)
             {
                 movie.IsActive = false;
+                _context.SaveChanges();
+            }
+            return RedirectToAction("ManageMovies");
+        }
+        public IActionResult Active(int id)
+        {
+            var movie = _context.Movies.Find(id);
+            if (movie != null)
+            {
+                movie.IsActive = true;
                 _context.SaveChanges();
             }
             return RedirectToAction("ManageMovies");

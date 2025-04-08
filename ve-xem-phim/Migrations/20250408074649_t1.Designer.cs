@@ -12,7 +12,7 @@ using ve_xem_phim.Models;
 namespace ve_xem_phim.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250326153117_t1")]
+    [Migration("20250408074649_t1")]
     partial class t1
     {
         /// <inheritdoc />
@@ -178,6 +178,23 @@ namespace ve_xem_phim.Migrations
                     b.ToTable("Carts");
                 });
 
+            modelBuilder.Entity("ve_xem_phim.Models.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Categories");
+                });
+
             modelBuilder.Entity("ve_xem_phim.Models.Invoice", b =>
                 {
                     b.Property<int>("Id")
@@ -211,6 +228,9 @@ namespace ve_xem_phim.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -222,7 +242,13 @@ namespace ve_xem_phim.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
 
                     b.ToTable("Movies");
                 });
@@ -241,12 +267,7 @@ namespace ve_xem_phim.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<int>("MovieId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("MovieId");
 
                     b.ToTable("Promotions");
                 });
@@ -265,6 +286,9 @@ namespace ve_xem_phim.Migrations
                     b.Property<int?>("CartId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
                     b.Property<int?>("InvoiceId")
                         .HasColumnType("int");
 
@@ -277,6 +301,12 @@ namespace ve_xem_phim.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int?>("PromotionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Rom")
+                        .HasColumnType("int");
+
                     b.Property<string>("Row")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -288,6 +318,8 @@ namespace ve_xem_phim.Migrations
                     b.HasIndex("InvoiceId");
 
                     b.HasIndex("MovieId");
+
+                    b.HasIndex("PromotionId");
 
                     b.ToTable("Tickets");
                 });
@@ -438,15 +470,15 @@ namespace ve_xem_phim.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ve_xem_phim.Models.Promotion", b =>
+            modelBuilder.Entity("ve_xem_phim.Models.Movie", b =>
                 {
-                    b.HasOne("ve_xem_phim.Models.Movie", "Movie")
-                        .WithMany()
-                        .HasForeignKey("MovieId")
+                    b.HasOne("ve_xem_phim.Models.Category", "Category")
+                        .WithMany("Movies")
+                        .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Movie");
+                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("ve_xem_phim.Models.Ticket", b =>
@@ -465,12 +497,24 @@ namespace ve_xem_phim.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ve_xem_phim.Models.Promotion", "Promotion")
+                        .WithMany("Tickets")
+                        .HasForeignKey("PromotionId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.Navigation("Movie");
+
+                    b.Navigation("Promotion");
                 });
 
             modelBuilder.Entity("ve_xem_phim.Models.Cart", b =>
                 {
                     b.Navigation("Tickets");
+                });
+
+            modelBuilder.Entity("ve_xem_phim.Models.Category", b =>
+                {
+                    b.Navigation("Movies");
                 });
 
             modelBuilder.Entity("ve_xem_phim.Models.Invoice", b =>
@@ -479,6 +523,11 @@ namespace ve_xem_phim.Migrations
                 });
 
             modelBuilder.Entity("ve_xem_phim.Models.Movie", b =>
+                {
+                    b.Navigation("Tickets");
+                });
+
+            modelBuilder.Entity("ve_xem_phim.Models.Promotion", b =>
                 {
                     b.Navigation("Tickets");
                 });

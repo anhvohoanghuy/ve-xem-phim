@@ -19,19 +19,19 @@ namespace ve_xem_phim.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult AddPromotion(int movieId, decimal discountPercentage)
+        public IActionResult AddPromotion( decimal discountPercentage)
         {
             if (HttpContext.Session.GetString("Role") != "admin")
                 return RedirectToAction("Login");
 
-            var promotion = new Promotion { MovieId = movieId, DiscountPercentage = discountPercentage };
+            var promotion = new Promotion { DiscountPercentage = discountPercentage };
             _context.Promotions.Add(promotion);
             _context.SaveChanges();
             return RedirectToAction("Admin");
         }
         public IActionResult ManagePromotions()
         {
-            var promotions = _context.Promotions.Include(p => p.Movie).ToList();
+            var promotions = _context.Promotions.Include(p => p.Tickets).ToList();
             return View(promotions);
         }
         public IActionResult EditPromotion(int id)

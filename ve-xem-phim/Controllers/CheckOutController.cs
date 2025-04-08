@@ -26,6 +26,17 @@ namespace ve_xem_phim.Controllers
             var user = _context.Users.Include(u => u.Cart).ThenInclude(c => c.Tickets).FirstOrDefault(u => u.Id == userId);
             if (user != null && user.Cart.Tickets.Any())
             {
+                foreach(var ticket in user.Cart.Tickets)
+                {
+                    if (ticket.PromotionId != 0)
+                    {
+                        var promotion = _context.Promotions.Find(ticket.PromotionId);
+                        if (promotion != null&&promotion.IsActive==true)
+                        {
+                            ticket.Price *= (100 - promotion.DiscountPercentage) / 100;
+                        }
+                    }
+                }
                 var totalPrice = user.Cart.Tickets.Sum(t => t.Price);
                 var invoice = new Invoice
                 {
