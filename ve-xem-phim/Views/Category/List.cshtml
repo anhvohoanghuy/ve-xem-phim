@@ -1,0 +1,25 @@
+﻿@model List<ve_xem_phim.Models.Category>
+
+<h2>Danh Sách Thể Loại</h2>
+
+<a asp-action="Add" class="btn btn-primary mb-2">Thêm Thể Loại</a>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Tên Thể Loại</th>
+            <th>Hành Động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var cat in Model)
+        {
+            <tr>
+                <td>@cat.Name</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@cat.Id" class="btn btn-warning btn-sm">Sửa</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

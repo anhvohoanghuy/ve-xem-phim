@@ -61,5 +61,6 @@ namespace ve_xem_phim.Controllers
             }
             return RedirectToAction("ManagePromotions");
         }
+        
     }
 }

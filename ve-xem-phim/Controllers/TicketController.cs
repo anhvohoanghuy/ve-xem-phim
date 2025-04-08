@@ -193,7 +193,8 @@ namespace ve_xem_phim.Controllers
                 .Select(g => new RoomShowtimeViewModel
                 {
                     Rom = g.Key.Rom,
-                    Date = g.Key.Date
+                    Date = g.Key.Date,
+                    Quantity= g.Count()
                 })
                 .OrderBy(s => s.Date)
                 .ToList();
@@ -201,6 +202,29 @@ namespace ve_xem_phim.Controllers
             ViewBag.Movie = _context.Movies.FirstOrDefault(m => m.Id == movieId); // Lấy thông tin phim để hiển thị
 
             return View(showtimes); // Trả về View
+        }
+        public IActionResult AddPromotionToTicket(int movieId, int rom, DateTime date)
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult AddPromotionToTicket(int movieId, int rom,DateTime date, int promotionId)
+        {
+            var tickets = _context.Tickets
+                .Where(t => t.MovieId == movieId && t.Rom == rom && t.Date == date)
+                .ToList();
+            if (tickets.Any())
+            {
+                // Duyệt qua tất cả vé và thay đổi trạng thái Available thành false
+                foreach (var ticket in tickets)
+                {
+                    ticket.PromotionId = promotionId;
+                }
+
+                _context.SaveChanges(); // Lưu thay đổi vào cơ sở dữ liệu
+            }
+
+            return RedirectToAction("GetRoomsAndShowtimes", "Ticket", new { movieId = movieId });
         }
     }
 }
