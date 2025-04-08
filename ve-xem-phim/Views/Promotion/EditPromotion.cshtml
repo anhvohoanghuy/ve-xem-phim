@@ -1,0 +1,21 @@
+﻿@model ve_xem_phim.Models.Promotion
+
+@{
+    ViewData["Title"] = "Sửa Khuyến Mãi";
+}
+
+<h2>Sửa Khuyến Mãi</h2>
+
+<form asp-action="EditPromotion" method="post">
+    <input type="hidden" name="id" value="@Model.Id" />
+
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="form-group">
+        <label for="discountPercentage">Phần trăm giảm giá (%)</label>
+        <input type="number" step="0.01" name="discountPercentage" class="form-control" value="@Model.DiscountPercentage" required />
+    </div>
+
+    <button type="submit" class="btn btn-success">Lưu</button>
+    <a asp-action="ManagePromotions" class="btn btn-secondary">Quay lại</a>
+</form>

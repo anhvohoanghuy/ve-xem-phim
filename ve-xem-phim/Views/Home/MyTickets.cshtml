@@ -20,6 +20,7 @@ else
                 <th>Ngày chiếu</th>
                 <th>Ghế</th>
                 <th>Giá</th>
+                <th>Khuyến mãi</th>
                 <th>Hành động</th>
             </tr>
         </thead>
@@ -30,8 +31,9 @@ else
                     <td>@(i + 1)</td>
                     <td>@Model[i].Movie?.Title</td>
                     <td>@Model[i].Date.ToString("dd/MM/yyyy HH:mm")</td>
-                    <td>@Model[i].Number</td>
+                    <td>@Model[i].Row @Model[i].Number</td>
                     <td>@Model[i].Price.ToString("N0") VND</td>
+                    <td>@Model[i].Promotion?.DiscountPercentage??0 %</td>
                     <td>
                         <a asp-controller="Home" asp-action="RemoveTicket" asp-route-ticketId="@Model[i].Id" class="btn btn-danger btn-sm">Xóa</a>
                     </td>

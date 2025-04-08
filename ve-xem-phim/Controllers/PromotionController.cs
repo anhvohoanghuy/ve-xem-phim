@@ -21,13 +21,11 @@ namespace ve_xem_phim.Controllers
         [HttpPost]
         public IActionResult AddPromotion( decimal discountPercentage)
         {
-            if (HttpContext.Session.GetString("Role") != "admin")
-                return RedirectToAction("Login");
 
             var promotion = new Promotion { DiscountPercentage = discountPercentage };
             _context.Promotions.Add(promotion);
             _context.SaveChanges();
-            return RedirectToAction("Admin");
+            return RedirectToAction("ManagePromotions");
         }
         public IActionResult ManagePromotions()
         {

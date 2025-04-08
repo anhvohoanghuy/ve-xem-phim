@@ -1,0 +1,51 @@
+﻿@model List<ve_xem_phim.Models.Promotion>
+
+@{
+    ViewData["Title"] = "Gán Khuyến Mãi cho Vé";
+    var movieId = (int)ViewBag.MovieId;
+    var rom = (int)ViewBag.Rom;
+    var date = (DateTime)ViewBag.Date;
+}
+
+<h2>Gán Khuyến Mãi cho Vé</h2>
+
+<p><strong>Phim ID:</strong> @movieId</p>
+<p><strong>Phòng:</strong> @rom</p>
+<p><strong>Ngày chiếu:</strong> @date.ToString("dd/MM/yyyy HH:mm")</p>
+
+<form asp-action="AddPromotionToTicket" method="post">
+    <input type="hidden" name="movieId" value="@movieId" />
+    <input type="hidden" name="rom" value="@rom" />
+    <input type="hidden" name="date" value="@date.ToString("yyyy-MM-ddTHH:mm:ss")" />
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Phần trăm giảm</th>
+                <th>Trạng thái</th>
+                <th>Chọn</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var promotion in Model)
+            {
+                if (promotion.IsActive)
+                {
+                    <tr>
+                        <td>@promotion.Id</td>
+                        <td>@promotion.DiscountPercentage %</td>
+                        <td>Đang hoạt động</td>
+                        <td>
+                            <button type="submit" name="promotionId" value="@promotion.Id" class="btn btn-success btn-sm">
+                                Áp dụng
+                            </button>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+    <a asp-action="ManagePromotions" class="btn btn-secondary">Quay lại</a>
+</form>

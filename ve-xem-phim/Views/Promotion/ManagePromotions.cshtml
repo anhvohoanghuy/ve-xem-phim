@@ -1,0 +1,41 @@
+﻿@model List<ve_xem_phim.Models.Promotion>
+
+@{
+    ViewData["Title"] = "Quản Lý Khuyến Mãi";
+}
+
+<h2>Quản Lý Khuyến Mãi</h2>
+
+<a asp-action="AddPromotion" class="btn btn-primary mb-3">Thêm Khuyến Mãi</a>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Phần trăm giảm</th>
+            <th>Trạng thái</th>
+            <th>Số vé áp dụng</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var promotion in Model)
+        {
+                <tr>
+                    <td>@promotion.Id</td>
+                    <td>@promotion.DiscountPercentage %</td>
+                    <td>
+                    @(promotion.IsActive ? "Đang hoạt động" : "Ngừng hoạt động")
+                    </td>
+                    <td>@(promotion.Tickets?.Count ?? 0)</td>
+                    <td>
+                        <a asp-action="EditPromotion" asp-route-id="@promotion.Id" class="btn btn-warning btn-sm">Sửa</a>
+                    @if (promotion.IsActive)
+                    {
+                                <a asp-action="DeletePromotion" asp-route-id="@promotion.Id" class="btn btn-danger btn-sm">Hủy kích hoạt</a>
+                    }
+                    </td>
+                </tr>
+        }
+    </tbody>
+</table>

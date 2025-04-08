@@ -1,0 +1,13 @@
+﻿@{
+    ViewData["Title"] = "Thêm khuyến mãi";
+}
+
+<h2>Thêm khuyến mãi</h2>
+
+<form asp-action="AddPromotion" method="post">
+    <div class="form-group">
+        <label>Giảm giá (%)</label>
+        <input type="number" step="0.01" name="discountPercentage" class="form-control" required />
+    </div>
+    <button type="submit" class="btn btn-primary mt-2">Thêm</button>
+</form>

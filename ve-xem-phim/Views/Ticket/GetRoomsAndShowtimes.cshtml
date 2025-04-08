@@ -36,6 +36,8 @@
                                    class="btn btn-warning btn-sm">
                                     Sửa
                                 </a>
+                                <a href="@Url.Action("AddPromotionToTicket", "Ticket", new { movieId = ViewBag.Movie?.Id, rom = item.Rom, date = item.Date })"
+                                   class="btn btn-primary btn-sm">Add promotion to</a>
 
                                 <!-- Vô hiệu hóa vé -->
                                 <a href="@Url.Action("DeleteTicket", "Ticket", new { movieId = ViewBag.Movie?.Id, rom = item.Rom, date = item.Date })"

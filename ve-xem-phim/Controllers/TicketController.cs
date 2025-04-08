@@ -205,7 +205,11 @@ namespace ve_xem_phim.Controllers
         }
         public IActionResult AddPromotionToTicket(int movieId, int rom, DateTime date)
         {
-            return View();
+            ViewBag.MovieId=movieId;
+            ViewBag.Rom=rom;
+            ViewBag.Date=date;
+            var promotions = _context.Promotions.ToList();
+            return View(promotions);
         }
         [HttpPost]
         public IActionResult AddPromotionToTicket(int movieId, int rom,DateTime date, int promotionId)

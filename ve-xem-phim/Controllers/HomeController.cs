@@ -70,7 +70,7 @@ namespace ve_xem_phim.Controllers
 
         public IActionResult Ticket(int movieId, int rom, DateTime date)
         {
-            var tickets = _context.Tickets.Where(t => t.MovieId == movieId && t.Rom== rom&& t.Date==date).ToList();
+            var tickets = _context.Tickets.Where(t => t.MovieId == movieId && t.Rom== rom&& t.Date==date).Include(t=>t.Promotion).ToList();
             ViewBag.Date=date;
             ViewBag.Rom = rom;
             return View(tickets);
@@ -80,7 +80,7 @@ namespace ve_xem_phim.Controllers
         {
             int number;
             int.TryParse(seat,out number);
-            List<Ticket> tickets = _context.Tickets.Where(t => t.MovieId == movieId && t.Date==date).ToList();
+            List<Ticket> tickets = _context.Tickets.Where(t => t.MovieId == movieId && t.Date==date).Include(t => t.Promotion).ToList();
             if (row != "0")
             {
                 tickets=tickets.Where(t=>t.Row==row).ToList();
