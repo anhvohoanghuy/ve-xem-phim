@@ -201,7 +201,7 @@ namespace ve_xem_phim.Controllers
                 _context.Comments.Add(comment);
                 _context.SaveChanges();
             }
-            return RedirectToAction("Details", new { id = comment.MovieId });
+            return RedirectToAction("MovieDetails", new { id = comment.MovieId });
         }
     }
 }
