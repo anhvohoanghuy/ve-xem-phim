@@ -18,6 +18,11 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.SignIn.RequireConfirmedEmail = false;
     options.SignIn.RequireConfirmedPhoneNumber = false;
 });
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Login/Login";         // Redirect khi chưa đăng nhập
+    options.AccessDeniedPath = "/Login/Login"; // Redirect khi không có quyền (ví dụ không đúng role)
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
